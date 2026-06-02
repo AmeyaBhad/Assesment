@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth.routes');
 const leadRoutes = require('./routes/lead.routes');
 const userRoutes = require('./routes/user.routes');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+const { globalLimiter, authLimiter } = require('./middleware/rateLimiter');
 const logger = require('./utils/logger');
 
 // Ensure logs directory exists
@@ -28,6 +29,10 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
+// Rate limiting
+app.use('/api', globalLimiter);
+app.use('/api/auth', authLimiter);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
